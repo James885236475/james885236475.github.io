@@ -20,8 +20,10 @@ function resetAndRender() {
 // all of your apply functions
 function applyAndRender() {
   // Multiple TODOs: Call your apply function(s) here
+applyFilter()
+  
 
-  applyFilter(increaseGreenByBlue);// do not change the below line of code
+  // do not change the below line of code
   render($("#display"), image);
 }
 
@@ -29,54 +31,69 @@ function applyAndRender() {
 // "apply" and "filter" functions should go below here //
 /////////////////////////////////////////////////////////
 
-// TODO 1, 2, 3 & 5: Create the applyFilter function here
-function applyFilter(filterFunction) {
-  for (var row = 0; row < image.length; row++) {
-    for (var col = 0; col < image[row].length; col++) {
-      //console.log(image[row][col]);
-      var pixel = image[row][col];
-      var pixelArray = rgbStringToArray(pixel);
-      // This is where I’ll modify the color values later
-      filterFunction(pixelArray);
-      var updatedPixel = rgbArrayToString(pixelArray);
-      image[row][col] = updatedPixel;
-    }
+
+function applyFilter(filterFunction){
+  for (let i = 0; i < image.length; i++) {
+      for (let j = 0; j < image[i].length; j++) {
+          let rgbString = image[i][j]; 
+          let rgbNumbers = rgbStringToArray(rgbString); // Step 2b
+          filterFunction(rgbNumbers); 
+          rgbString = rgbArrayToString(rgbNumbers); // Step 2d
+          image[i][j] = rgbString; // Step 2e
+      }
   }
 }
 
-// TODO 9 Create the applyFilterNoBackground function
+applyFilter(reddify);
+
+
 function applyFilterNoBackground(filterFunction){
-var backgroundColor = image[0][0];
-for (var row = 0; row < image.length; row++) {
-  for (var col = 0; col < image[row].length; col++) {
-if (image[row][col] !== backgroundColor){
-  var pixel = image[row][col];
-  var pixelArray = rgbStringToArray(pixel);
-  filterFunction(pixelArray) = pixelArray;
-  var updatedPixel = rgbArrayToString(pixelArray);
-  image[row][col] = updatedPixel;
-}
-}
-}
-}
-// TODO 6: Create the keepInBounds function
-function keepInBounds(theNumber){
-  if(theNumber < 0){
-    return 0;
-  }
-  if(theNumber > 255){
-    return 255;
-  }
-  else{
-    return theNumber;
+  let backgroundColor = image[0][0];
+
+  for (let i = 0; i < image.length; i++) {
+      for (let j = 0; j < image[i].length; j++) {
+          if (image[i][j] !== backgroundColor) {
+              let rgbString = image[i][j]; // Step 2a
+              let rgbNumbers = rgbStringToArray(rgbString); // Step 2b
+              filterFunction(rgbNumbers); // Step 4c
+              rgbString = rgbArrayToString(rgbNumbers); // Step 2d
+              image[i][j] = rgbString; // Step 2e
+          }
+      }
   }
 }
-// TODO 4: Create reddify filter function
-function reddify(pixelArray){
-  pixelArray[YELLOW] = 200;
+
+function applyAndRender() {
+  applyFilterNoBackground(reddify);
+  applyFilterNoBackground(decreaseBlue);
+  applyFilterNoBackground(increaseGreenByBlue);
+  render($("#display"), image);
 }
-// TODO 7 & 8: Create more filter functions
-function decreaseBlue(pixelArray) {
-  pixelArray[BLUE] = keepInBounds(pixelArray[BLUE] - 50);
+
+
+function keepInBounds(num) {
+  return num < 0 ? 0 : num > 255 ? 255 : num;
 }
-// CHALLENGE code goes below here
+
+// TODO 3: Create reddify function
+function reddify(rgbNumbers){
+  rgbNumbers[RED] = 200;
+}
+
+
+function decreaseBlue(rgbNumbers) {
+  rgbNumbers[BLUE] = keepInBounds(rgbNumbers[BLUE] - 50);
+}
+
+function increaseGreenByBlue(rgbNumbers) {
+  rgbNumbers[GREEN] = keepInBounds(rgbNumbers[GREEN] + rgbNumbers[BLUE]);
+}
+
+function applyAndRender() {
+  applyFilter(reddify);
+  applyFilter(decreaseBlue);
+  applyFilter(increaseGreenByBlue);
+  render($("#display"), image);
+}
+
+
